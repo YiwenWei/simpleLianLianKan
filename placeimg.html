@@ -1,0 +1,57 @@
+<!DOCTYPE htl>
+<html>
+<head>
+  <title>Smiple LianLianKan 8*8 img display with placeimg</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <style>
+
+  div {
+    position: fixed;
+    left: 25%;
+    line-height: 0;
+  }
+    img{
+      width: 100px;
+      border: solid 1px maroon;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+
+
+<body>
+  <div id="animalPics"></div>
+  <script src="flicker_search_jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+  //get img from placeimg.com
+  var animalPicsSrc = [];
+  for (var i = 0; i < 12; i++ ){
+    var imgSrc = "http://placeimg.com/100/100/animals?a" + Date.now()*(i + 1) * 2;
+    animalPicsSrc.push(imgSrc);
+  };
+
+//creat 64 imgs with 12 same ones
+  var animalMatrix = [];
+  for (var i = 0; i < 64; i++) {
+    var item = animalPicsSrc[Math.floor(Math.random() * 12) + 1];
+    animalMatrix.push(item);
+  //  console.log(animalMatrix);
+
+  };
+
+//creat matrix
+  for (var x = 0; x < 8; x++) {
+    for (var y = 0; y < 8; y++) {
+      $("<img />")
+        .attr("src", animalMatrix[x * 8 + y])
+        .appendTo("#animalPics");
+    };
+    $("<br />").appendTo("#animalPics");
+
+  };
+
+
+</script>
+</body>
+
+</html>

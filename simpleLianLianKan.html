@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Smiple LianLianKan 8*8 img display</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <style>
+    br {
+      content: " ";
+      display: block;
+
+    }
+
+    div {
+      position: fixed;
+      left: 25%;
+      line-height: 0;
+    }
+
+    img {
+      object-fit: cover;
+      width: 100px;
+      height: 100px;
+      outline: 50px solid lightgray;
+      outline-offset: -50px;
+    }
+
+    .imgClicked, .found {
+      outline: 0px solid salmon;
+      outline-offset: -0px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="animalPics"></div>
+  <script src="flicker_search_jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    // function chunkArrToMultiDimArr(arr, size) {
+    //
+    //   var newArray = [];
+    //
+    //   while (arr.length > 0) {
+    //     newArray.push(arr.slice(0, size));
+    //     arr = arr.slice(size);
+    //   }
+    //
+    //   return newArray;
+    // };
+    //get pictures from flickr
+    var animalPics = [];
+    $(function() {
+      var opts = {
+        method: 'flickr.photos.search',
+        api_key: '36717dd8bb326bb6a72952f7e1d054ac',
+        sort: 'relevance',
+        text: 'dogs',
+        extras: 'url_m',
+        per_page: 50,
+        format: 'json',
+        nojsoncallback: 1
+      };
+      $.get('https://api.flickr.com/services/rest/', opts, function(resp) {
+        if (resp.stat === "ok") {
+          $.each(resp.photos.photo, function(index, value) {
+            //  value.url_m,
+            if (value.url_m) {
+              animalPics.push(value.url_m);
+            }
+            //  console.log(value.url_m);
+          });
+
+          var animalMatrix = [];
+          for (var i = 0; i < 64; i++) {
+            var item = animalPics[Math.floor(Math.random() * animalPics.length)];
+            animalMatrix.push(item);
+          };
+
+          for (var x = 0; x < 8; x++) {
+            for (var y = 0; y < 8; y++) {
+
+              $("<img />")
+                .attr("src", animalMatrix[x * 8 + y])
+                .appendTo("#animalPics");
+            };
+            $("<br />").appendTo("#animalPics");
+
+          };
+
+        } else {
+          console.log('not ok', resp);
+        }
+
+        //images on click
+        /*var clicks = 0;
+        $("img").on("click", function() {
+          //console.log("Good. You can click me!");
+          clicks++;
+          if (clicks == 1 || clicks == 2) {
+            $(this).css("border", "solid 2px red");
+          } else {
+            clicks = 0;
+          }
+        });
+        */
+        //highlight the last two imgClicked
+        var clickArr = new Array();
+        $("img").on("click", function() {
+          $("img").removeClass("imgClicked");
+          var filename = this.src.substring(this.src.lastIndexOf('/') + 1);
+          if (filename != "white.jpg") {
+            if (clickArr.length == 2) {
+              clickArr = [];
+            }
+            clickArr.push(this);
+            console.log(this.src);
+            $(this).addClass("imgClicked");
+            if (clickArr[(clickArr.length - 2)].src.substring(clickArr[(clickArr.length - 2)].src.lastIndexOf('/') + 1) != "white.jpg") {
+              $(clickArr[(clickArr.length - 2)]).addClass("imgClicked");
+            }
+          }
+
+          //console.log(clickArr[(clickArr.length - 2)].src);
+          if (clickArr[(clickArr.length - 2)] != clickArr[(clickArr.length - 1)]) {
+            if (clickArr[(clickArr.length - 2)].src == clickArr[(clickArr.length - 1)].src) {
+              clickArr[(clickArr.length - 2)].src = "white.jpg";
+              clickArr[(clickArr.length - 1)].src = "white.jpg";
+              $(clickArr[(clickArr.length - 1)]).removeClass("imgClicked");
+              $(clickArr[(clickArr.length - 2)]).removeClass("imgClicked");
+
+              $(clickArr[(clickArr.length - 1)]).addClass("found");
+              $(clickArr[(clickArr.length - 2)]).addClass("found");
+
+            }
+          } else {
+
+          }
+        });
+
+      });
+
+    });
+  </script>
+</body>
+
+</html>
